@@ -6,8 +6,13 @@ import (
 )
 
 func TestArgs(t *testing.T) {
+	// Store old OS arguments and delete on cleanup
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
+
+	// Create a temporary file such that run by filename will work
+	os.Create("filename.lox")
+	defer os.Remove("filename.lox")
 
 	cases := []struct {
 		Name         string
@@ -15,6 +20,7 @@ func TestArgs(t *testing.T) {
 		ExpectedExit int
 	}{
 		{"run by filename", []string{"filename.lox"}, 0},
+		{"run by filename missing", []string{"missingfile.lox"}, 1},
 		{"run by prompt", []string{}, 0},
 		{"too many args", []string{"f1.lox", "f2.lox"}, 64},
 	}
