@@ -25,26 +25,32 @@ func runFile(filename string) error {
 }
 
 func runPrompt() error {
-	const inputPrefix = ">>> "
+	// Run as an interactive prompt (REPL).
 	fmt.Println("Running prompt")
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print(inputPrefix)
-	for scanner.Scan() {
+	for {
+		fmt.Print(">>> ")
+		if result := scanner.Scan(); !result {
+			break
+		}
+
 		line := strings.TrimSpace(scanner.Text())
+		if err := scanner.Err(); err != nil {
+			fmt.Println("Error encountered:", err)
+			return err
+		}
+
 		if line == "exit" || line == "quit" {
 			return nil
 		}
-		if line != "" {
-			err := run(line)
-			if err != nil {
-				return err
-			}
+		if line == "" {
+			continue
 		}
-		fmt.Print(inputPrefix)
-	}
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error encountered:", err)
-		return err
+
+		err := run(line)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
