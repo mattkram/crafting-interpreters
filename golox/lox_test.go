@@ -21,6 +21,7 @@ func TestArgs(t *testing.T) {
 	}{
 		{"run by filename", []string{"filename.lox"}, 0},
 		{"run by filename missing", []string{"missingfile.lox"}, 1},
+		{"run with string arg", []string{"-c", "print \"Hello\""}, 0},
 		{"run by prompt", []string{}, 0},
 		{"too many args", []string{"f1.lox", "f2.lox"}, 64},
 	}
