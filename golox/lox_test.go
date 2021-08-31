@@ -35,3 +35,14 @@ func TestArgs(t *testing.T) {
 		}
 	}
 }
+
+func TestError(t *testing.T) {
+	// After emitting an error message the global HasError flag is set.
+	if HadError {
+		t.Errorf("Expected global error flag to start out as false")
+	}
+	Error(1, "message")
+	if !HadError {
+		t.Errorf("Expected global error flag to be true")
+	}
+}

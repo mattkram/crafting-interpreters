@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var HadError = false
+
 func runString(source string) error {
 	fmt.Println("Running string:", source)
 	err := run(source)
@@ -34,16 +36,17 @@ func runPrompt() error {
 			break
 		}
 
-		line := strings.TrimSpace(scanner.Text())
 		if err := scanner.Err(); err != nil {
 			fmt.Println("Error encountered:", err)
 			return err
 		}
 
-		if line == "exit" || line == "quit" {
+		line := strings.TrimSpace(scanner.Text())
+
+		switch line {
+		case "exit", "quit":
 			return nil
-		}
-		if line == "" {
+		case "":
 			continue
 		}
 
@@ -85,6 +88,11 @@ func runLoxMain() int {
 		}
 	}
 	return 0
+}
+
+func Error(line int, msg string) {
+	fmt.Fprintf(os.Stderr, "[line %v] Error: %s\n", line, msg)
+	HadError = true
 }
 
 func main() {
