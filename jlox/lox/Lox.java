@@ -14,7 +14,9 @@ public class Lox {
     public static void main(String[] args) throws IOException {
         // Main program entry point, processing CLI args and delegating to 
         // different run modes.
-        if (args.length > 1) {
+        if (args.length == 2 && args[0].equals("-c")) {
+            runString(args[1]);
+        } else if (args.length > 1) {
             System.out.println("Usage: jlox [script]");
             System.exit(64);
         } else if (args.length == 1) {
@@ -22,6 +24,13 @@ public class Lox {
         } else {
             runPrompt();
         }
+    }
+
+    private static void runString(String source) throws IOException {
+        // Run a string passed in with the -c argument.
+        run(source);
+        
+        if (hadError) System.exit(65);
     }
 
     private static void runFile(String path) throws IOException {
