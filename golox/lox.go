@@ -10,8 +10,8 @@ import (
 
 func runString(source string) error {
 	fmt.Println("Running string:", source)
-	run(source)
-	return nil
+	err := run(source)
+	return err
 }
 
 func runFile(filename string) error {
@@ -20,8 +20,8 @@ func runFile(filename string) error {
 	if err != nil {
 		return err
 	}
-	run(string(b))
-	return nil
+	err = run(string(b))
+	return err
 }
 
 func runPrompt() error {
@@ -30,12 +30,15 @@ func runPrompt() error {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print(inputPrefix)
 	for scanner.Scan() {
-		line := scanner.Text()
+		line := strings.TrimSpace(scanner.Text())
 		if line == "exit" || line == "quit" {
 			return nil
 		}
-		if strings.TrimSpace(line) != "" {
-			run(line)
+		if line != "" {
+			err := run(line)
+			if err != nil {
+				return err
+			}
 		}
 		fmt.Print(inputPrefix)
 	}
@@ -46,8 +49,9 @@ func runPrompt() error {
 	return nil
 }
 
-func run(source string) {
+func run(source string) error {
 	fmt.Println(source)
+	return nil
 }
 
 func runLoxMain() int {
