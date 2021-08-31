@@ -77,7 +77,11 @@ class Scanner {
             case '"': string(); break;
 
             default:
-                Lox.error(line, "Unexpected character: '" + c + "'.");
+                if (isDigit(c)) {
+                    number();
+                } else {
+                    Lox.error(line, "Unexpected character: '" + c + "'.");
+                }
                 break;
         }
     }
@@ -102,6 +106,22 @@ class Scanner {
         addToken(STRING, value);
     }
 
+    private void number() {
+        // Parse a number, which may have an optional fractional part.
+        while (isDigit(peek())) advance();
+
+        // Look for a fractional part.
+        if (peek() == '.' && isDigit(peekNext())) {
+            // Consume the "."
+            advance();
+
+            while (isDigit(peek())) advance();
+        }
+
+        addToken(NUMBER,
+            Double.parseDouble(source.substring(start, current)));
+    }
+
     private boolean match(char expected) {
         // Check whether current char matches expected, and if so advance.
         if (isAtEnd()) return false;
@@ -115,6 +135,16 @@ class Scanner {
         // Return character at current position, without advancing.
         if (isAtEnd()) return '\0';
         return source.charAt(current);
+    }
+
+    private char peekNext() {
+        // Return the next character, without advancing.
+        if (current + 1 >= source.length()) return '\0';
+        return source.charAt(current + 1);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
     }
 
     private boolean isAtEnd() {
