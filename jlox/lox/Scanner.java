@@ -17,6 +17,27 @@ class Scanner {
     private int current = 0; // the current character being considered
     private int line = 1;    // the current line being scanned
 
+    private static final Map<String, TokenType> keywords;
+
+    static {
+        keywords = new HashMap<>();
+        keywords.put("and",     AND);
+        keywords.put("class",   CLASS);
+        keywords.put("else",    ELSE);
+        keywords.put("false",   FALSE);
+        keywords.put("fun",     FUN);
+        keywords.put("if",      IF);
+        keywords.put("nil",     NIL);
+        keywords.put("or",      OR);
+        keywords.put("print",   PRINT);
+        keywords.put("return",  RETURN);
+        keywords.put("super",   SUPER);
+        keywords.put("this",    THIS);
+        keywords.put("true",    TRUE);
+        keywords.put("var",     VAR);
+        keywords.put("while",   WHILE);
+    }
+
     Scanner(String source) {
         this.source = source;
     }
@@ -79,6 +100,8 @@ class Scanner {
             default:
                 if (isDigit(c)) {
                     number();
+                } else if (isAlpha(c)) {
+                    identifier();
                 } else {
                     Lox.error(line, "Unexpected character: '" + c + "'.");
                 }
@@ -122,6 +145,16 @@ class Scanner {
             Double.parseDouble(source.substring(start, current)));
     }
 
+    private void identifier() {
+        // Generate a token that is either a specific keyword or a user-defined identifier.
+        while (isAlphaNumeric(peek())) advance();
+
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if (type == null) type = IDENTIFIER;
+        addToken(type);
+    }
+
     private boolean match(char expected) {
         // Check whether current char matches expected, and if so advance.
         if (isAtEnd()) return false;
@@ -145,6 +178,16 @@ class Scanner {
 
     private boolean isDigit(char c) {
         return c >= '0' && c <= '9';
+    }
+
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') || 
+               (c >= 'A' && c <= 'Z') ||
+               (c == '_');
+    }
+
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
     }
 
     private boolean isAtEnd() {
