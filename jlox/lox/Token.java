@@ -14,6 +14,10 @@ class Token {
     }
 
     public String toString() {
-        return type + " " + lexeme + " " + literal;
+        return (
+            String.format("%-15s", type) +
+            String.format("%-10s", lexeme) +
+            literal
+        );
     }
 }
