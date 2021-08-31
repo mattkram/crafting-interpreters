@@ -1,20 +1,19 @@
 JFLAGS = -g
 JC = javac
 JVM = java
-.SUFFIXES: .java .class
-.java.class:
-	$(JC) $(JFLAGS) $*.java
 
 SRC = lox
 MAIN = Lox
 
-CLASSES = $(wildcard $(SRC)/*.java)
+JAVA_FILES = $(wildcard $(SRC)/*.java)
+CLASSES = $(JAVA_FILES:.java=.class)
 
-default: classes
+default: $(CLASSES)
 
-classes: $(CLASSES:.java=.class)
+%.class: %.java
+	$(JC) $(JFLAGS) $<
 
-run: lox/Lox.class
+run: default 
 	$(JVM) $(SRC)/$(MAIN)
 
 clean:
