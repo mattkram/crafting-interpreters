@@ -3,3 +3,6 @@
 
 # Java compiled output
 *.class
+
+# Executables
+golox/golox
