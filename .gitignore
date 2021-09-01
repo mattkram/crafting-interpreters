@@ -1,6 +1,9 @@
 # Temporary and swap files
 *.swp
 
+# Editor settings
+.vscode/
+
 # Java compiled output
 *.class
 
