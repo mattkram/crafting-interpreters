@@ -31,6 +31,18 @@ func NewScanner(source string) Scanner {
 	return s
 }
 
+func isAlpha(c rune) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_')
+}
+
+func isDigit(c rune) bool {
+	return (c >= '0') && (c <= '9')
+}
+
+func isAlphaNumeric(c rune) bool {
+	return isAlpha(c) || isDigit(c)
+}
+
 func (s *Scanner) addToken(type_ TokenType, literal interface{}) {
 	text := s.source[s.start:s.current]
 	token := Token{type_, text, literal, s.line}
