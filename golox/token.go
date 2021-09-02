@@ -10,5 +10,5 @@ type Token struct {
 }
 
 func (t Token) ToString() string {
-	return fmt.Sprintf("%v %v %v", TokenTypeString(t.Type), t.Lexeme, t.Literal)
+	return fmt.Sprintf("%-15v %v %v", TokenTypeString(t.Type), t.Lexeme, t.Literal)
 }
