@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"strconv"
+)
+
 type Scanner struct {
 	source   string
 	tokens   []Token
@@ -36,6 +41,7 @@ func (s *Scanner) scanTokens() []Token {
 		s.start = s.current
 		s.scanToken()
 	}
+	s.start = s.current
 	s.addToken(EOF, nil)
 	return s.tokens
 }
@@ -45,7 +51,122 @@ func (s *Scanner) scanToken() {
 	switch c {
 	case '(':
 		s.addToken(LEFT_PAREN, nil)
+	case ')':
+		s.addToken(RIGHT_PAREN, nil)
+	case '{':
+		s.addToken(LEFT_BRACE, nil)
+	case '}':
+		s.addToken(RIGHT_BRACE, nil)
+	case ',':
+		s.addToken(COMMA, nil)
+	case '.':
+		s.addToken(DOT, nil)
+	case '-':
+		s.addToken(MINUS, nil)
+	case '+':
+		s.addToken(PLUS, nil)
+	case ';':
+		s.addToken(SEMICOLON, nil)
+	case '*':
+		s.addToken(STAR, nil)
+	case '!':
+		if s.match('=') {
+			s.addToken(BANG_EQUAL, nil)
+		} else {
+			s.addToken(BANG, nil)
+		}
+	case '=':
+		if s.match('=') {
+			s.addToken(EQUAL_EQUAL, nil)
+		} else {
+			s.addToken(EQUAL, nil)
+		}
+	case '<':
+		if s.match('=') {
+			s.addToken(LESS_EQUAL, nil)
+		} else {
+			s.addToken(LESS, nil)
+		}
+	case '>':
+		if s.match('=') {
+			s.addToken(GREATER_EQUAL, nil)
+		} else {
+			s.addToken(GREATER, nil)
+		}
+	case '/':
+		if s.match('/') {
+			for s.peek() != '\n' && !s.isAtEnd() {
+				s.advance()
+			}
+		} else {
+			s.addToken(SLASH, nil)
+		}
+	case ' ', '\t', '\r':
+		break
+	case '"':
+		s.string()
+	default:
+		if isDigit(c) {
+			s.number()
+		} else if isAlpha(c) {
+			s.identifier()
+		} else {
+			Error(s.line, fmt.Sprintf("Unexpected character: '%c'", c))
+		}
 	}
+}
+
+func (s *Scanner) string() {
+	for s.peek() != '"' && !s.isAtEnd() {
+		if s.peek() == '\n' {
+			s.line = s.line + 1
+		}
+		s.advance()
+	}
+
+	if s.isAtEnd() {
+		Error(s.line, "Unterminated string")
+		return
+	}
+
+	// The closing ".
+	s.advance()
+
+	value := s.source[s.start+1 : s.current-1]
+	s.addToken(STRING, value)
+}
+
+func (s *Scanner) number() {
+	for isDigit(s.peek()) {
+		s.advance()
+	}
+
+	// Look for a fractional part.
+	if s.peek() == '.' && isDigit(s.peekNext()) {
+		s.advance()
+		for isDigit(s.peek()) {
+			s.advance()
+		}
+	}
+
+	value, err := strconv.ParseFloat(s.source[s.start:s.current], 64)
+	if err != nil {
+		Error(s.line, fmt.Sprintf("Error converting float"))
+	}
+	s.addToken(NUMBER, value)
+}
+
+func (s *Scanner) identifier() {
+	for isAlphaNumeric(s.peek()) {
+		s.advance()
+	}
+
+	text := s.source[s.start:s.current]
+	type_, ok := s.keywords[text]
+	if !ok {
+		type_ = IDENTIFIER
+	}
+	s.addToken(type_, nil)
 }
 
 func (s *Scanner) addToken(type_ TokenType, literal interface{}) {
@@ -56,6 +177,18 @@ func (s *Scanner) addToken(type_ TokenType, literal interface{}) {
 
 func (s *Scanner) isAtEnd() bool {
 	return s.current >= len(s.source)
+}
+
+func (s *Scanner) match(expected byte) bool {
+	if s.isAtEnd() {
+		return false
+	}
+	if s.source[s.current] != expected {
+		return false
+	}
+
+	s.current = s.current + 1
+	return true
 }
 
 func (s *Scanner) peek() byte {
