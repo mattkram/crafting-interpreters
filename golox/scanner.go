@@ -37,14 +37,19 @@ func (s *Scanner) addToken(type_ TokenType, literal interface{}) {
 	s.tokens = append(s.tokens, token)
 }
 
-func isAlpha(c rune) bool {
+func (s *Scanner) advance() byte {
+	s.current = s.current + 1
+	return s.source[s.current-1]
+}
+
+func isAlpha(c byte) bool {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_')
 }
 
-func isDigit(c rune) bool {
+func isDigit(c byte) bool {
 	return (c >= '0') && (c <= '9')
 }
 
-func isAlphaNumeric(c rune) bool {
+func isAlphaNumeric(c byte) bool {
 	return isAlpha(c) || isDigit(c)
 }

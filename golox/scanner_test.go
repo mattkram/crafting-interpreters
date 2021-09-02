@@ -25,8 +25,8 @@ func TestNewScanner(t *testing.T) {
 
 func TestIsAlpha(t *testing.T) {
 	cases := []struct {
-		Rune     rune
-		Expected bool
+		character byte
+		Expected  bool
 	}{
 		{'A', true},
 		{'Z', true},
@@ -38,17 +38,17 @@ func TestIsAlpha(t *testing.T) {
 		{'-', false},
 	}
 	for _, tc := range cases {
-		result := isAlpha(tc.Rune)
+		result := isAlpha(tc.character)
 		if result != tc.Expected {
-			t.Errorf("isAlpha(%v) should be %v", tc.Rune, tc.Expected)
+			t.Errorf("isAlpha(%v) should be %v", tc.character, tc.Expected)
 		}
 	}
 }
 
 func TestIsDigit(t *testing.T) {
 	cases := []struct {
-		Rune     rune
-		Expected bool
+		character byte
+		Expected  bool
 	}{
 		{'A', false},
 		{'Z', false},
@@ -60,17 +60,17 @@ func TestIsDigit(t *testing.T) {
 		{'-', false},
 	}
 	for _, tc := range cases {
-		result := isDigit(tc.Rune)
+		result := isDigit(tc.character)
 		if result != tc.Expected {
-			t.Errorf("isDigit(%v) should be %v", tc.Rune, tc.Expected)
+			t.Errorf("isDigit(%v) should be %v", tc.character, tc.Expected)
 		}
 	}
 }
 
 func TestIsAlphaNumeric(t *testing.T) {
 	cases := []struct {
-		Rune     rune
-		Expected bool
+		character byte
+		Expected  bool
 	}{
 		{'A', true},
 		{'Z', true},
@@ -82,9 +82,9 @@ func TestIsAlphaNumeric(t *testing.T) {
 		{'-', false},
 	}
 	for _, tc := range cases {
-		result := isAlphaNumeric(tc.Rune)
+		result := isAlphaNumeric(tc.character)
 		if result != tc.Expected {
-			t.Errorf("isAlphaNummeric(%v) should be %v", tc.Rune, tc.Expected)
+			t.Errorf("isAlphaNummeric(%v) should be %v", tc.character, tc.Expected)
 		}
 	}
 }
@@ -107,4 +107,18 @@ func TestAddToken(t *testing.T) {
 	if len(s.tokens) != 2 {
 		t.Errorf("Expected 2 tokens, got %v", len(s.tokens))
 	}
+}
+
+func TestScannerAdvance(t *testing.T) {
+	s := NewScanner("Hello{}")
+	c := s.advance()
+
+	if c != 'H' {
+		t.Errorf("Expected character %v, got %v", 'H', c)
+	}
+
+	if s.current != 1 {
+		t.Errorf("Expected current to be %v, got %v", 1, s.current)
+	}
+
 }
