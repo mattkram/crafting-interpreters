@@ -37,9 +37,28 @@ func (s *Scanner) addToken(type_ TokenType, literal interface{}) {
 	s.tokens = append(s.tokens, token)
 }
 
+func (s *Scanner) isAtEnd() bool {
+	return s.current >= len(s.source)
+}
+
+func (s *Scanner) peek() byte {
+	if s.isAtEnd() {
+		return '\000'
+	}
+	return s.source[s.current]
+}
+
+func (s *Scanner) peekNext() byte {
+	if s.current+1 >= len(s.source) {
+		return '\000'
+	}
+	return s.source[s.current+1]
+}
+
 func (s *Scanner) advance() byte {
+	c := s.source[s.current]
 	s.current = s.current + 1
-	return s.source[s.current-1]
+	return c
 }
 
 func isAlpha(c byte) bool {

@@ -120,5 +120,24 @@ func TestScannerAdvance(t *testing.T) {
 	if s.current != 1 {
 		t.Errorf("Expected current to be %v, got %v", 1, s.current)
 	}
+}
 
+func TestScannerPeek(t *testing.T) {
+	s := NewScanner("Hello{}")
+
+	if c := s.peek(); c != 'H' {
+		t.Errorf("Expected character %v, got %v", 'H', c)
+	}
+
+	if c := s.peekNext(); c != 'e' {
+		t.Errorf("Expected character %v, got %v", 'e', c)
+	}
+
+	for i := 0; i < len(s.source); i = i + 1 {
+		s.advance()
+	}
+
+	if !s.isAtEnd() {
+		t.Errorf("Should be at the end")
+	}
 }
