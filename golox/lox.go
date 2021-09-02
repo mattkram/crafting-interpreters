@@ -59,7 +59,13 @@ func runPrompt() error {
 }
 
 func run(source string) error {
-	fmt.Println(source)
+	s := NewScanner(source)
+	tokens := s.scanTokens()
+
+	for _, t := range tokens {
+		fmt.Println(t.ToString())
+	}
+
 	return nil
 }
 

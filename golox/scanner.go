@@ -31,6 +31,23 @@ func NewScanner(source string) Scanner {
 	return s
 }
 
+func (s *Scanner) scanTokens() []Token {
+	for !s.isAtEnd() {
+		s.start = s.current
+		s.scanToken()
+	}
+	s.addToken(EOF, nil)
+	return s.tokens
+}
+
+func (s *Scanner) scanToken() {
+	c := s.advance()
+	switch c {
+	case '(':
+		s.addToken(LEFT_PAREN, nil)
+	}
+}
+
 func (s *Scanner) addToken(type_ TokenType, literal interface{}) {
 	text := s.source[s.start:s.current]
 	token := Token{type_, text, literal, s.line}
