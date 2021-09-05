@@ -16,5 +16,8 @@ default: $(CLASSES)
 run: default 
 	$(JVM) $(SRC)/$(MAIN)
 
+ast: tool/GenerateAst.class
+	java tool/GenerateAst $(shell pwd)/lox
+
 clean:
 	$(RM) $(SRC)/*.class
