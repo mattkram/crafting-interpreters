@@ -12,7 +12,7 @@ public class Lox {
     static boolean hadError = false;
 
     public static void main(String[] args) throws IOException {
-        // Main program entry point, processing CLI args and delegating to 
+        // Main program entry point, processing CLI args and delegating to
         // different run modes.
         if (args.length == 2 && args[0].equals("-c")) {
             runString(args[1]);
@@ -29,7 +29,7 @@ public class Lox {
     private static void runString(String source) throws IOException {
         // Run a string passed in with the -c argument.
         run(source);
-        
+
         if (hadError) System.exit(65);
     }
 
@@ -60,11 +60,13 @@ public class Lox {
         // Run the interpreter for a given source code string.
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
 
-        // For now, just print the tokens.
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        // Stop if there was a syntax error.
+        if (hadError) return;
+
+        System.out.println(new AstPrinter().print(expression));
     }
 
     static void error(int line, String message) {
@@ -77,5 +79,13 @@ public class Lox {
         System.err.println(
             "[line " + line + "] Error" + where + ": " + message);
         hadError = true;
+    }
+
+    static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
     }
 }
