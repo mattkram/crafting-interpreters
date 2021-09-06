@@ -12,7 +12,6 @@ public class GenerateAst {
             System.exit(64);
         }
         String outputDir = args[0];
-        System.out.printf("Output dir: %s\n", outputDir);
 
         defineAst(outputDir, "Expr", Arrays.asList(
             "Binary     : Expr left, Token operator, Expr right",
@@ -26,7 +25,6 @@ public class GenerateAst {
         String outputDir, String baseName, List<String> types
     ) throws IOException {
         String path = outputDir + "/" + baseName + ".java";
-        System.out.printf("Output file: %s\n", path);
 
         PrintWriter writer = new PrintWriter(path, "UTF-8");
 

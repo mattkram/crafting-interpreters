@@ -8,7 +8,7 @@ MAIN = Lox
 JAVA_FILES = $(wildcard $(SRC)/*.java)
 CLASSES = $(JAVA_FILES:.java=.class)
 
-default: $(CLASSES) ast
+default: ast $(CLASSES)
 
 %.class: %.java
 	$(JC) $(JFLAGS) $<
