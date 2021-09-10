@@ -25,6 +25,7 @@ class Scanner {
         keywords.put("class",   CLASS);
         keywords.put("else",    ELSE);
         keywords.put("false",   FALSE);
+        keywords.put("for",     FOR);
         keywords.put("fun",     FUN);
         keywords.put("if",      IF);
         keywords.put("nil",     NIL);
@@ -95,6 +96,10 @@ class Scanner {
                 // Ignore whitespace.
                 break;
 
+            case '\n':
+                line++;
+                break;
+
             case '"': string(); break;
 
             default:
@@ -120,7 +125,7 @@ class Scanner {
             Lox.error(line, "Unterminated string.");
             return;
         }
-        
+
         // The closing ".
         advance();
 
@@ -181,7 +186,7 @@ class Scanner {
     }
 
     private boolean isAlpha(char c) {
-        return (c >= 'a' && c <= 'z') || 
+        return (c >= 'a' && c <= 'z') ||
                (c >= 'A' && c <= 'Z') ||
                (c == '_');
     }
