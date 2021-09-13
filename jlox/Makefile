@@ -20,4 +20,5 @@ ast: tool/GenerateAst.class
 	java tool/GenerateAst $(shell pwd)/lox
 
 clean:
-	$(RM) $(SRC)/*.class
+	$(RM) $(SRC)/*.class tool/*.class
+	$(RM) $(SRC)/Expr.java $(SRC)/Stmt.java
