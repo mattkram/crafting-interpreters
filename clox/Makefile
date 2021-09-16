@@ -1,5 +1,4 @@
 CC = gcc
-CFLAGS = -I.
 
 EXE = lox
 SRC = src
